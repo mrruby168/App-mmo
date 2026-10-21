@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Link Vault – Bản vẽ UI (Python + PyQt6)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef1f5;--surface:#fff;--surface2:#f5f7fa;--side:#101827;--side-t:#9aa6bb;--text:#141b2b;--muted:#66728a;--border:#dde3ec;--primary:#0f9d7a;--primary-t:#fff;--gold:#c98a12;--warn:#c98a12;--info:#2f6fe4;--err:#d64545;--ok:#0f9d7a;--shadow:0 12px 40px rgba(16,24,39,.14)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f17;--surface:#151c2a;--surface2:#1b2434;--side:#0d1320;--side-t:#8794ad;--text:#e8edf6;--muted:#8d99b0;--border:#26314a;--primary:#2fd3a4;--primary-t:#062a21;--gold:#f0b63e;--warn:#f0b63e;--info:#6b9bff;--err:#ff7070;--ok:#2fd3a4;--shadow:0 12px 40px rgba(0,0,0,.5)}}
+:root[data-theme="dark"]{--bg:#0b0f17;--surface:#151c2a;--surface2:#1b2434;--side:#0d1320;--side-t:#8794ad;--text:#e8edf6;--muted:#8d99b0;--border:#26314a;--primary:#2fd3a4;--primary-t:#062a21;--gold:#f0b63e;--warn:#f0b63e;--info:#6b9bff;--err:#ff7070;--ok:#2fd3a4;--shadow:0 12px 40px rgba(0,0,0,.5)}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:14px/1.5 "Be Vietnam Pro",system-ui,"Segoe UI",sans-serif}
+.page{max-width:1240px;margin:0 auto;padding:24px 16px 40px}
+.intro{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.intro h1{font-size:22px;margin:0;font-weight:700}
+.intro p{margin:0;color:var(--muted);font-size:13px}
+.win{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.titlebar{display:flex;align-items:center;gap:8px;padding:0 14px;height:36px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--border)}
+.titlebar b{margin-left:8px;font-weight:500}
+.app{display:grid;grid-template-columns:208px 1fr;min-height:600px}
+.side{background:var(--side);padding:18px 12px;display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;color:#fff;font-weight:700;font-size:15px}
+.brand i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#2fd3a4,#f0b63e);display:grid;place-items:center;color:#0d1320;font-style:normal;font-weight:800}
+.nav{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;border-radius:8px;color:var(--side-t);cursor:pointer;font-weight:500;position:relative}
+.nav:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav:focus-visible{outline:2px solid #2fd3a4;outline-offset:1px}
+.nav[aria-selected="true"]{background:rgba(47,211,164,.14);color:#fff}
+.nav[aria-selected="true"]::before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:#2fd3a4}
+.nav .ic{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700;background:rgba(255,255,255,.08)}
+.nav .n{margin-left:auto;font-size:12px;opacity:.7}
+.side .sp{flex:1}
+.side .foot{color:var(--side-t);font-size:12px;padding:8px}
+.main{padding:22px 24px;min-width:0}
+.head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px}
+.head h2{margin:0;font-size:24px;line-height:1.2;font-weight:700}
+.head small{display:block;color:var(--muted);font-size:13px;font-weight:400;margin-top:2px}
+.grow{flex:1}
+.search{height:40px;width:220px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--muted);padding:0 12px;display:flex;align-items:center;font-size:13px}
+.btn{height:40px;padding:0 16px;border-radius:8px;border:0;background:var(--primary);color:var(--primary-t);font:600 14px inherit;font-family:inherit;cursor:pointer}
+.btn:focus-visible,.chip:focus-visible{outline:2px solid var(--info);outline-offset:2px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--border);background:transparent;color:var(--muted);font:500 13px inherit;font-family:inherit}
+.chip.on{background:var(--text);color:var(--surface);border-color:var(--text)}
+.scroll{overflow-x:auto}
+.table{min-width:880px}
+.row{display:grid;grid-template-columns:minmax(190px,1.4fr) minmax(140px,1.2fr) 116px minmax(110px,1fr) minmax(130px,1.1fr) 112px;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:8px}
+.row:hover{border-color:var(--primary)}
+.row.th{border:0;background:none;padding:0 14px 4px;color:var(--muted);font-size:12px;font-weight:600}
+.proj{display:flex;gap:12px;align-items:center;min-width:0}
+.logo{flex:none;width:48px;height:48px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:16px}
+.proj b{display:block;font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link{color:var(--info);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.how{font-size:13px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bar{height:8px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--primary)}
+.pct{font-size:12px;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.note{font-size:13px;color:var(--muted);background:var(--surface2);border-left:3px solid var(--gold);padding:6px 10px;border-radius:0 8px 8px 0;max-height:calc(3em + 12px);overflow:hidden}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:16px;display:flex;flex-direction:column;gap:12px}
+.card:hover{border-color:var(--primary)}
+.card .top{display:flex;gap:12px;align-items:center}
+.badge{margin-left:auto;font-size:12px;font-weight:600;padding:2px 10px;border-radius:12px;border:1px solid currentColor}
+.b-ok{color:var(--ok)}.b-warn{color:var(--warn)}.b-info{color:var(--info)}.b-err{color:var(--err)}
+.notes{display:grid;grid-template-columns:270px 1fr;gap:16px;min-height:470px}
+.nlist{display:flex;flex-direction:column;gap:8px}
+.nitem{border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--surface)}
+.nitem.on{border-color:var(--primary);background:var(--surface2)}
+.nitem b{display:block;font-weight:600;font-size:14px}
+.nitem span{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nitem em{font-style:normal;font-size:11.5px;color:var(--muted)}
+.editor{border:1px solid var(--border);border-radius:12px;background:var(--surface);display:flex;flex-direction:column;min-width:0}
+.editor .tt{padding:18px 22px 10px;font-size:22px;font-weight:700;border-bottom:1px solid var(--border)}
+.editor .meta{padding:8px 22px;font-size:12px;color:var(--muted);display:flex;gap:16px}
+.editor .body{padding:6px 22px 22px;font-size:15px;line-height:1.7;max-width:70ch}
+.editor .body p{margin:0 0 10px}
+.editor .tool{margin-top:auto;display:flex;gap:8px;padding:12px 22px;border-top:1px solid var(--border);align-items:center}
+.ghost{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--text);font:500 13px inherit;font-family:inherit}
+.legend{margin-top:14px;color:var(--muted);font-size:12.5px;display:flex;gap:6px 20px;flex-wrap:wrap}
+.hint{margin-top:16px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);font-size:13px;color:var(--muted)}
+.ov{position:fixed;inset:0;background:rgba(5,8,14,.55);display:none;place-items:center;padding:16px;z-index:20}.ov.open{display:grid}
+.dlg{width:min(560px,100%);max-height:100%;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:22px}.dlg h3{margin:0 0 16px;font-size:20px}
+.f{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}.f label{font-size:12px;font-weight:600;color:var(--muted)}
+.in{min-height:40px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);padding:9px 12px;font-size:14px}.in.ta{min-height:76px}.in.fc{border-color:var(--primary);box-shadow:0 0 0 3px rgba(47,211,164,.22)}
+.two{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:end}.acts{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.act{display:flex;gap:6px}.act .ghost{padding:0 10px}.ghost.del{color:var(--err)}
+.sec{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:18px;margin-bottom:14px}.sec h3{margin:0 0 4px;font-size:16px}.sec p{margin:0 0 12px;color:var(--muted);font-size:13px}
+.path{display:flex;gap:8px;flex-wrap:wrap}.path .in{flex:1;min-width:220px;font-family:Consolas,monospace;font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}.seg span{padding:7px 16px;font-size:13px;color:var(--muted)}.seg .on{background:var(--primary);color:var(--primary-t);font-weight:600}
+.okt{color:var(--ok);font-size:12.5px;margin-top:8px}.row2{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:760px){.app{grid-template-columns:1fr}.side{flex-direction:row;overflow-x:auto;padding:10px}.brand,.side .sp,.side .foot{display:none}.nav .n{display:none}.nav[aria-selected="true"]::before{display:none}.notes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.row,.card{transition:border-color .15s}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="intro">
+    <h1>Link Vault – bản vẽ UI 5 màn hình</h1>
+    <p>Bấm từng tab ở thanh trái để xem. Bản wireframe cho PyQt6, tự đổi sáng/tối theo máy.</p>
+  </div>
+  <div class="win">
+    <div class="titlebar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>Link Vault</b></div>
+    <div class="app">
+      <nav class="side" role="tablist" aria-label="Danh mục" id="nav"></nav>
+      <section class="main" id="main" role="tabpanel"></section>
+    </div>
+  </div>
+  <div class="hint">Logo bên trái là ô chữ cái tạm thời. Khi code, app cho chọn ảnh logo hoặc tự lấy favicon của link, bo góc 12px.</div>
+</div>
+<script>
+const TABS=[
+ {id:"mmo",ic:"M",name:"MMO",n:6},
+ {id:"ai",ic:"A",name:"AI kiếm tiền",n:4},
+ {id:"air",ic:"D",name:"Airdrop",n:6},
+ {id:"tool",ic:"T",name:"Tool AI",n:6},
+ {id:"note",ic:"N",name:"Note",n:4}
+];
+const G=["#0f9d7a","#2f6fe4","#a855f7","#e0662f","#d6336c","#0c8fb0"];
+const logo=(t,i)=>`<div class="logo" style="background:${G[i%G.length]}">${t.slice(0,2).toUpperCase()}</div>`;
+const act=`<div class="act"><button class="ghost" data-edit>Sửa</button><button class="ghost del">Xoá</button></div>`;
+const tags=a=>`<div class="tags">${a.map(x=>`<span class="tag">${x}</span>`).join("")}</div>`;
+const progress=p=>`<div class="bar" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100"><i style="width:${p}%"></i></div><div class="pct"><span>${p<100?"Đang làm":"Hoàn tất"}</span><b>${p}%</b></div>`;
+const head=(t,s,btn)=>`<div class="head"><h2>${t}<small>${s}</small></h2><span class="grow"></span><div class="search">Tìm theo tên, link, ghi chú</div><button class="ghost" style="height:40px">Nhập</button><button class="ghost" style="height:40px">Xuất</button><button class="btn" data-edit>+ ${btn}</button></div>`;
+const table=(rows,chips)=>`<div class="chips">${chips.map((c,i)=>`<button class="chip${i?"":" on"}">${c}</button>`).join("")}</div><div class="scroll"><div class="table"><div class="row th"><span>Tên dự án và link</span><span>Cách làm</span><span>Tiến độ</span><span>Công cụ hỗ trợ</span><span>Note</span><span></span></div>${rows.map((r,i)=>`<div class="row"><div class="proj">${logo(r[0],i)}<div style="min-width:0"><b>${r[0]}</b><span class="link">${r[1]}</span></div></div><div class="how">${r[2]}</div><div>${progress(r[3])}</div>${tags(r[4])}<div class="note">${r[5]}</div>${act}</div>`).join("")}</div></div>`;
+const V={
+mmo:()=>head("MMO","6 dự án đang theo dõi","Thêm dự án")+table([
+ ["Swagbucks","https://swagbucks.com/p/register","Làm khảo sát ngắn mỗi sáng, xem video, gom điểm đổi PayPal.",70,["Chrome","VPN"],"Rút tối thiểu 25$, đổi gift card nhanh."],
+ ["Freecash","https://freecash.com/r/abc","Làm offer game và app, thưởng cộng ngay.",35,["Điện thoại","Email phụ"],"Hay lỗi, nhớ chụp bằng chứng."],
+ ["Remotasks","https://remotasks.com/signup","Gán nhãn dữ liệu, cần qua bài test đầu vào.",20,["Laptop","Tai nghe"],"Chờ duyệt tài khoản 3 ngày."],
+ ["Honeygain","https://honeygain.com/","Cài app chạy nền, đủ 20$ thì rút.",100,["PC chạy 24/7"],"Ổn định, bỏ cho chạy qua đêm."],
+ ["Upwork","https://upwork.com/freelancers","Tạo hồ sơ, gửi 5 proposal mỗi tuần.",45,["Canva","ChatGPT"],"Cần cập nhật portfolio."],
+ ["Fiverr","https://fiverr.com/start_selling","Đăng gig viết nội dung bằng tiếng Việt.",15,["Canva","Grammarly"],"Nghiên cứu giá gig cùng ngành."]
+],["Tất cả","Đang làm","Chờ duyệt","Hoàn tất"]),
+ai:()=>head("AI kiếm tiền","4 web kiếm tiền cùng AI","Thêm dự án")+table([
+ ["Midjourney","https://midjourney.com","Tạo ảnh bán trên stock, in lên áo và cốc.",60,["Discord","Canva"],"Bán ở Etsy, ghi rõ ảnh do AI."],
+ ["ElevenLabs","https://elevenlabs.io","Làm voice cho video và audiobook rồi nhận job.",40,["CapCut","Audacity"],"Gói free 10k ký tự mỗi tháng."],
+ ["Gumroad","https://gumroad.com","Bán prompt pack và template tạo bằng AI.",25,["ChatGPT","Notion"],"Bộ prompt viết content đang làm dở."],
+ ["Printful","https://printful.com","Thiết kế bằng AI, in theo đơn, không giữ kho.",10,["Midjourney","Shopify"],"Cần thử mẫu thật trước khi bán."]
+],["Tất cả","Đang làm","Ý tưởng","Hoàn tất"]),
+air:()=>head("Airdrop","6 kèo trong danh sách","Thêm kèo")+`<div class="chips">${["Tất cả","Đang farm","Chờ snapshot","Đã nhận"].map((c,i)=>`<button class="chip${i?"":" on"}">${c}</button>`).join("")}</div><div class="grid">${[
+ ["LayerZero","Đang farm","b-ok","Bridge mỗi tuần, giữ ít nhất 5 giao dịch."],
+ ["zkSync","Chờ snapshot","b-warn","Tin đồn snapshot cuối quý, kiểm tra điểm hoạt động."],
+ ["Scroll","Đang farm","b-ok","Làm quest hằng ngày trên testnet."],
+ ["Monad","Mới","b-info","Đăng ký whitelist, theo dõi Discord."],
+ ["Blast","Đã nhận","b-ok","Đã claim, nhớ chuyển ví lạnh."],
+ ["Berachain","Hết hạn","b-err","Bỏ lỡ đợt đầu, theo dõi đợt hai."]
+].map((a,i)=>`<div class="card"><div class="top">${logo(a[0],i)}<b style="font-size:15px">${a[0]}</b><span class="badge ${a[2]}">${a[1]}</span></div><div class="note">${a[3]}</div>${act}</div>`).join("")}</div>`,
+tool:()=>head("Tool AI","6 AI hỗ trợ công việc","Thêm AI")+`<div class="grid">${[
+ ["ChatGPT","https://chatgpt.com","Viết nội dung, lên ý tưởng, giải đáp nhanh."],
+ ["Claude","https://claude.ai","Đọc tài liệu dài, viết code, phân tích."],
+ ["Midjourney","https://midjourney.com","Tạo ảnh nghệ thuật từ mô tả."],
+ ["Canva AI","https://canva.com","Thiết kế banner và poster nhanh."],
+ ["ElevenLabs","https://elevenlabs.io","Chuyển văn bản thành giọng nói tự nhiên."],
+ ["Perplexity","https://perplexity.ai","Tra cứu có dẫn nguồn."]
+].map((a,i)=>`<div class="card"><div class="top">${logo(a[0],i+1)}<div style="min-width:0"><b style="font-size:15px">${a[0]}</b><span class="link">${a[1]}</span></div></div><div style="font-size:13px"><span style="color:var(--muted);font-size:12px">Tác dụng</span><br>${a[2]}</div>${act}</div>`).join("")}</div>`,
+note:()=>head("Note","4 ghi chú","Ghi chú mới")+`<div class="notes"><div class="nlist">${[
+ ["Quy trình rút tiền","Rút PayPal vào thứ Sáu hàng tuần…","Hôm nay",1],
+ ["Tài khoản cần xác minh","Freecash, Remotasks còn thiếu KYC…","Hôm qua",0],
+ ["Ý tưởng bán prompt","Bộ prompt cho nhà hàng nhỏ…","17/10",0],
+ ["Lịch kiểm tra airdrop","Thứ Hai: LayerZero, thứ Tư: Scroll…","12/10",0]
+].map(n=>`<div class="nitem${n[3]?" on":""}"><b>${n[0]}</b><span>${n[1]}</span><em>${n[2]}</em></div>`).join("")}</div><div class="editor"><div class="tt">Quy trình rút tiền</div><div class="meta"><span>Sửa lần cuối: hôm nay 09:12</span><span>Tự động lưu</span></div><div class="body"><p>Rút PayPal vào thứ Sáu hàng tuần để tránh phí gộp.</p><p>Swagbucks cần tối thiểu 25$. Honeygain cần 20$ và phải xác minh email trước.</p><p>Chụp lại màn hình giao dịch gửi về mục ghi chú dự án.</p></div><div class="tool"><button class="ghost">Ghim</button><button class="ghost">Xoá</button><span class="grow"></span><button class="btn" style="height:32px">Lưu</button></div></div></div>`,
+set:()=>`<div class="head"><h2>Cài đặt<small>Dữ liệu, nhập xuất và giao diện</small></h2></div>
+<div class="sec"><h3>Thư mục dữ liệu</h3><p>Chọn nơi lưu dữ liệu. App ghi nhớ đường dẫn, không cần sửa code khi đóng gói exe.</p>
+<div class="seg" style="margin-bottom:12px"><span class="on">Di động (cạnh file exe)</span><span>Tuỳ chọn thư mục</span></div>
+<div class="path"><div class="in">D:\\LinkVaultData</div><button class="ghost" style="height:40px">Chọn thư mục…</button><button class="ghost" style="height:40px">Mở thư mục</button></div>
+<div class="okt">Ghi được · 148 mục · 2,4 MB · linkvault.db</div>
+<div style="margin-top:10px;font-size:13px">☑ Chuyển dữ liệu hiện tại sang thư mục mới</div></div>
+<div class="sec"><h3>Nhập và xuất dữ liệu</h3><p>Xuất JSON để sao lưu toàn bộ, CSV để mở bằng Excel. Khi nhập có thể gộp hoặc ghi đè.</p>
+<div class="row2"><button class="btn">Xuất JSON toàn bộ</button><button class="ghost" style="height:40px">Xuất CSV tab hiện tại</button><button class="ghost" style="height:40px">Nhập từ file…</button></div></div>
+<div class="sec"><h3>Giao diện và sao lưu</h3><p>Sao lưu tự động khi thoát, giữ 5 bản gần nhất.</p>
+<div class="row2" style="align-items:center"><div class="seg"><span>Sáng</span><span>Tối</span><span class="on">Theo hệ thống</span></div><span style="font-size:13px">☑ Tự sao lưu khi thoát</span></div></div>`
+};
+const nav=document.getElementById("nav"),main=document.getElementById("main");
+nav.innerHTML=`<div class="brand"><i>L</i>Link Vault</div>`+TABS.map(t=>`<button class="nav" role="tab" data-id="${t.id}"><span class="ic">${t.ic}</span>${t.name}<span class="n">${t.n}</span></button>`).join("")+`<div class="sp"></div><button class="nav" role="tab" data-id="set"><span class="ic">S</span>Cài đặt</button><div class="foot">v1.0 · PyQt6</div>`;
+function show(id){nav.querySelectorAll(".nav").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));main.innerHTML=V[id]();}
+nav.addEventListener("click",e=>{const b=e.target.closest(".nav");if(b)show(b.dataset.id)});
+const ov=document.createElement("div");ov.className="ov";ov.id="ov";
+ov.innerHTML=`<div class="dlg" role="dialog" aria-label="Sửa dự án"><h3>Sửa dự án</h3>
+<div class="two f"><div class="logo" style="width:64px;height:64px;background:#0f9d7a">SW</div><div class="f" style="margin:0"><label>Logo</label><button class="ghost" style="height:40px">Chọn ảnh…</button></div></div>
+<div class="f"><label>Tên dự án</label><div class="in fc">Swagbucks</div></div>
+<div class="f"><label>Link</label><div class="in">https://swagbucks.com/p/register</div></div>
+<div class="f"><label>Cách làm</label><div class="in ta">Làm khảo sát ngắn mỗi sáng, xem video, gom điểm đổi PayPal.</div></div>
+<div class="f"><label>Tiến độ</label>${progress(70)}</div>
+<div class="f"><label>Công cụ hỗ trợ</label>${tags(["Chrome","VPN","+ Thêm"])}</div>
+<div class="f"><label>Note</label><div class="in ta">Rút tối thiểu 25$, đổi gift card nhanh hơn.</div></div>
+<div class="acts"><button class="ghost del" style="height:40px;margin-right:auto">Xoá dự án</button><button class="ghost" style="height:40px">Huỷ</button><button class="btn">Lưu</button></div></div>`;
+document.body.appendChild(ov);
+main.addEventListener("click",e=>{if(e.target.closest("[data-edit]"))ov.classList.add("open")});
+ov.addEventListener("click",e=>{if(e.target===ov||e.target.closest(".ghost"))ov.classList.remove("open")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")ov.classList.remove("open")});
+show("mmo");
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "scale": "Small",
+  "has_ui": true,
+  "ui_requirement_mode": "AI_DESIGN",
+  "document_language": "vi",
+  "objective": "Ứng dụng desktop ghi lại và quản lý link các web kiếm tiền (MMO, AI, Airdrop), danh sách AI hỗ trợ công việc và ghi chú, dữ liệu lưu cục bộ ở thư mục do người dùng chọn.",
+  "users": ["Một người dùng cá nhân trên Windows, không cần đăng nhập"],
+  "features": [
+    {"id": "F-01", "name": "Tab MMO", "description": "Mỗi dự án gồm: logo (bên trái), tên dự án, link, cách làm, tiến độ (0-100%), công cụ hỗ trợ (nhiều nhãn), note. Không còn cột chụp ảnh, thay bằng note.", "priority": "must", "status": "confirmed"},
+    {"id": "F-02", "name": "Tab AI kiếm tiền", "description": "Cùng các trường với tab MMO, dành cho web kiếm tiền cùng AI.", "priority": "must", "status": "confirmed"},
+    {"id": "F-03", "name": "Tab Airdrop", "description": "Danh sách kèo gồm: logo, tên dự án, note. Có trạng thái (Mới, Đang farm, Chờ snapshot, Đã nhận, Hết hạn).", "priority": "must", "status": "confirmed"},
+    {"id": "F-04", "name": "Tab Tool AI", "description": "Danh sách AI hỗ trợ công việc gồm: logo, tên AI, link, tác dụng.", "priority": "must", "status": "confirmed"},
+    {"id": "F-05", "name": "Tab Note", "description": "Ghi chú dạng text gồm tiêu đề và nội dung, tự động lưu, có ghim.", "priority": "must", "status": "confirmed"},
+    {"id": "F-06", "name": "Thêm, sửa, xoá bản ghi", "description": "Thêm, sửa, xoá mọi bản ghi và mọi trường của từng tab, có hộp thoại xác nhận khi xoá và cho hoàn tác ngay sau khi xoá.", "priority": "must", "status": "confirmed"},
+    {"id": "F-07", "name": "Chọn thư mục lưu dữ liệu", "description": "Người dùng chọn thư mục lưu dữ liệu trong Cài đặt, có kiểm tra quyền ghi, tuỳ chọn chuyển dữ liệu cũ sang thư mục mới, nút mở thư mục. Chế độ Di động lưu cạnh file exe.", "priority": "must", "status": "confirmed"},
+    {"id": "F-08", "name": "Nhập và xuất dữ liệu", "description": "Xuất toàn bộ ra JSON, xuất tab hiện tại ra CSV (UTF-8 có BOM để Excel mở đúng tiếng Việt). Nhập từ JSON hoặc CSV với hai chế độ: gộp hoặc ghi đè.", "priority": "must", "status": "proposed"},
+    {"id": "F-09", "name": "Tìm kiếm và lọc", "description": "Tìm theo tên, link, note (có debounce) và lọc theo trạng thái trong từng tab.", "priority": "should", "status": "proposed"},
+    {"id": "F-10", "name": "Sao lưu tự động", "description": "Tự sao lưu khi thoát, giữ 5 bản gần nhất trong thư mục backups của thư mục dữ liệu.", "priority": "should", "status": "proposed"},
+    {"id": "F-11", "name": "Giao diện sáng/tối", "description": "Chọn Sáng, Tối hoặc Theo hệ thống.", "priority": "should", "status": "proposed"},
+    {"id": "F-12", "name": "Mở link", "description": "Bấm vào link để mở bằng trình duyệt mặc định, chỉ chấp nhận http và https.", "priority": "should", "status": "proposed"},
+    {"id": "F-13", "name": "Tuỳ biến trường", "description": "Thêm hoặc xoá trường tuỳ ý cho bản ghi. Chưa chốt cách hiểu của yêu cầu \"sửa xoá các trường\", mặc định hiểu là sửa xoá giá trị các trường của bản ghi (F-06).", "priority": "could", "status": "proposed"}
+  ],
+  "workflow": "Mở app, chọn tab, thêm bản ghi bằng nút Thêm, sửa hoặc xoá ngay trên dòng, tìm và lọc khi cần. Vào Cài đặt để đổi thư mục dữ liệu, nhập hoặc xuất, đổi giao diện.",
+  "platform": "Windows 10/11 desktop; đóng gói PyInstaller chế độ onedir",
+  "data_storage": "DB",
+  "technology": "Python 3.11+, PyQt6, sqlite3 (thư viện chuẩn), PyInstaller (chỉ khi build)",
+  "constraints": [
+    "Không hardcode đường dẫn tuyệt đối; mọi đường dẫn đi qua một module paths duy nhất, chạy đúng cả khi chạy mã nguồn lẫn khi đóng gói onedir.",
+    "Đường dẫn thư mục dữ liệu nằm trong config.json, ưu tiên lưu đường dẫn tương đối so với thư mục app khi nằm trong thư mục app.",
+    "Không cần quyền admin, không ghi vào thư mục cài đặt khi không ở chế độ Di động.",
+    "Giao diện mượt: danh sách dùng model/view có ảo hoá, không tạo widget cho từng dòng.",
+    "Thao tác nặng (nhập, xuất, chuyển dữ liệu, sao lưu) chạy ở luồng nền, không đơ giao diện.",
+    "Chỉ dùng PyQt6 làm dependency chạy; không có dịch vụ mạng, không gửi dữ liệu ra ngoài.",
+    "Tương thích tiếng Việt Unicode ở mọi nơi (DB, JSON, CSV)."
+  ],
+  "confirmed_by_user": false
+}
