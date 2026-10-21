@@ -23,6 +23,14 @@ import sys
 import zipfile
 from pathlib import Path
 
+# Ép stdout/stderr dùng UTF-8: trên Windows console mặc định là cp1252 sẽ
+# gây UnicodeEncodeError khi in thông báo tiếng Việt (có dấu).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 ROOT = Path(__file__).resolve().parent
 
 APP_NAME = "LinkVault"
