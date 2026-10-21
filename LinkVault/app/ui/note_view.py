@@ -173,7 +173,7 @@ class NoteView(QWidget):
         self.meta.setStyleSheet("background: transparent; color: palette(mid); font-size: 12px;")
         self.editor = QPlainTextEdit()
         self.editor.setPlaceholderText("Nội dung…")
-        self.editor.tabChangesFocus(True)
+        self.editor.setTabChangesFocus(True)
         pl.addWidget(self.title_edit)
         pl.addWidget(self.meta)
         pl.addWidget(self.editor, 1)
