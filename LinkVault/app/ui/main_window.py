@@ -120,7 +120,8 @@ class MainWindow(QMainWindow):
                 view = NoteView(db, db.data_dir)
             else:
                 view = SettingsView(db, cfg)
-            view.count_changed.connect(self._on_count)
+            if hasattr(view, "count_changed"):
+                view.count_changed.connect(self._on_count)
             if hasattr(view, "delete_occurred"):
                 view.delete_occurred.connect(self._offer_undo)
             if hasattr(view, "export_requested"):
@@ -331,7 +332,8 @@ class MainWindow(QMainWindow):
                 view = NoteView(self.db, self.db.data_dir)
             else:
                 view = SettingsView(self.db, self.cfg)
-            view.count_changed.connect(self._on_count)
+            if hasattr(view, "count_changed"):
+                view.count_changed.connect(self._on_count)
             if hasattr(view, "delete_occurred"):
                 view.delete_occurred.connect(self._offer_undo)
             if hasattr(view, "export_requested"):

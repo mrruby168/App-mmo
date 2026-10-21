@@ -1,9 +1,2 @@
-__pycache__/
-*.pyc
-*.zip
-
-# Build artifacts (PyInstaller)
-build/
-dist/
-*.spec
-app.log
+*.db
+*.bundle
