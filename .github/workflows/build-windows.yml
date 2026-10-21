@@ -50,7 +50,10 @@ jobs:
 
       - name: Rename console-mode zip
         working-directory: LinkVault
-        run: Rename-Item dist/LinkVault-windows.zip dist/LinkVault-windows-console.zip
+        shell: pwsh
+        run: |
+          if (!(Test-Path -LiteralPath "dist/LinkVault-windows.zip")) { throw "Source ZIP not found: dist/LinkVault-windows.zip" }
+          Move-Item -LiteralPath "dist/LinkVault-windows.zip" -Destination "dist/LinkVault-windows-console.zip" -Force
 
       - name: Build exe (windowed mode, khong hien console)
         working-directory: LinkVault
