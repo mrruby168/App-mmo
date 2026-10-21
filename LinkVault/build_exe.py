@@ -23,6 +23,14 @@ import sys
 import zipfile
 from pathlib import Path
 
+# Ensure Windows CI console can print UTF-8 output safely.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
+
 ROOT = Path(__file__).resolve().parent
 
 APP_NAME = "LinkVault"
