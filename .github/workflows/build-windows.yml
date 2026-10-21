@@ -1,0 +1,86 @@
+name: Build Windows EXE (One-Dir)
+
+# Build LinkVault.exe bằng PyInstaller --onedir trên Windows runner của GitHub.
+# Chạy khi:
+#   - push có thay đổi trong LinkVault/ hoặc chính workflow này
+#   - tag v* (release)
+#   - chạy thủ công từ tab Actions (Workflow dispatch)
+on:
+  push:
+    paths:
+      - "LinkVault/**"
+      - ".github/workflows/build-windows.yml"
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        working-directory: LinkVault
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run tests (pytest, bo qua neu chua co test)
+        working-directory: LinkVault
+        run: |
+          $tests = Get-ChildItem -Recurse -Filter "test_*.py" -Path tests -ErrorAction SilentlyContinue
+          if ($tests) { python -m pytest tests -q } else { Write-Host "No tests found, skipping." }
+
+      # Build một lần với console (bản thường), một lần windowed (ẩn console).
+      # Script build_exe.py tự: nhúng UI_SPEC.json + assets, hidden-imports,
+      # và nén dist/LinkVault thành dist/LinkVault-windows.zip
+      - name: Build exe (console mode)
+        working-directory: LinkVault
+        run: python build_exe.py --clean
+
+      - name: Rename console-mode zip
+        working-directory: LinkVault
+        run: Rename-Item dist/LinkVault-windows.zip dist/LinkVault-windows-console.zip
+
+      - name: Build exe (windowed mode, khong hien console)
+        working-directory: LinkVault
+        run: python build_exe.py --nozip --noconsole
+
+      - name: Zip windowed build
+        working-directory: LinkVault
+        run: Compress-Archive -Path dist/LinkVault -DestinationPath dist/LinkVault-windows-windowed.zip -Force
+
+      - name: Upload artifact (console build)
+        uses: actions/upload-artifact@v4
+        with:
+          name: LinkVault-windows-console
+          path: LinkVault/dist/LinkVault-windows-console.zip
+          if-no-files-found: error
+
+      - name: Upload artifact (windowed build)
+        uses: actions/upload-artifact@v4
+        with:
+          name: LinkVault-windows-windowed
+          path: LinkVault/dist/LinkVault-windows-windowed.zip
+          if-no-files-found: error
+
+      # Khi tạo tag v*, đính 2 bản zip vào GitHub Release để tải trực tiếp.
+      - name: Create / update release with binaries
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            LinkVault/dist/LinkVault-windows-console.zip
+            LinkVault/dist/LinkVault-windows-windowed.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
