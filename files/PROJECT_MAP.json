@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "map_type": "planned",
+  "generated_at": "2026-10-19",
+  "scale": "Small",
+  "entry_points": ["main.py"],
+  "modules": [
+    {"path": "main.py", "type": "entry", "responsibility": "Tạo QApplication, nạp theme, mở DB, hiện cửa sổ chính", "feature": ["F-01","F-02","F-03","F-04","F-05"], "dependencies": ["app/paths.py","app/config.py","app/db.py","app/ui/theme.py","app/ui/main_window.py"], "status": "planned"},
+    {"path": "app/__init__.py", "type": "package", "responsibility": "Đánh dấu package, chứa APP_NAME và APP_VERSION", "feature": [], "dependencies": [], "status": "planned"},
+    {"path": "app/paths.py", "type": "core", "responsibility": "Nguồn duy nhất xác định app_dir, resource_path, config_path, data_dir mặc định (chạy mã nguồn và PyInstaller onedir)", "feature": ["F-07"], "dependencies": [], "status": "planned"},
+    {"path": "app/config.py", "type": "core", "responsibility": "Đọc và ghi config.json nguyên tử; đường dẫn dữ liệu tương đối hoặc tuyệt đối", "feature": ["F-07","F-11","F-10"], "dependencies": ["app/paths.py"], "status": "planned"},
+    {"path": "app/db.py", "type": "data", "responsibility": "Kết nối SQLite, schema, migration, CRUD, tìm kiếm, kiểm tra ghi thư mục", "feature": ["F-01","F-02","F-03","F-04","F-05","F-06","F-09"], "dependencies": ["app/config.py"], "status": "planned"},
+    {"path": "app/models.py", "type": "data", "responsibility": "Dataclass Entry, Note; EntryListModel và NoteListModel tải theo lô", "feature": ["F-01","F-02","F-03","F-04","F-05","F-06","F-09"], "dependencies": ["app/db.py"], "status": "planned"},
+    {"path": "app/io_data.py", "type": "service", "responsibility": "Xuất JSON/CSV, nhập JSON/CSV (gộp hoặc ghi đè), chuyển thư mục dữ liệu, sao lưu; worker nền", "feature": ["F-07","F-08","F-10"], "dependencies": ["app/db.py","app/config.py","app/paths.py"], "status": "planned"},
+    {"path": "app/ui/theme.py", "type": "ui", "responsibility": "Sinh QSS và palette sáng/tối từ token, nạp font đóng gói", "feature": ["F-11"], "dependencies": ["app/paths.py"], "status": "planned"},
+    {"path": "app/ui/main_window.py", "type": "ui", "responsibility": "Khung chính, sidebar, stacked pages, phím tắt, toast, hoàn tác xoá", "feature": ["F-01","F-02","F-03","F-04","F-05","F-06"], "dependencies": ["app/ui/entry_view.py","app/ui/card_view.py","app/ui/note_view.py","app/ui/settings_view.py","app/ui/widgets.py","app/ui/theme.py"], "status": "planned"},
+    {"path": "app/ui/entry_view.py", "type": "ui", "responsibility": "Tab MMO và AI: QListView, delegate vẽ dòng, tìm kiếm, lọc, thao tác Sửa/Xoá/Mở link", "feature": ["F-01","F-02","F-06","F-09","F-12"], "dependencies": ["app/models.py","app/ui/dialogs.py","app/ui/widgets.py"], "status": "planned"},
+    {"path": "app/ui/card_view.py", "type": "ui", "responsibility": "Tab Airdrop và Tool: QListView IconMode, delegate vẽ thẻ", "feature": ["F-03","F-04","F-06","F-09","F-12"], "dependencies": ["app/models.py","app/ui/dialogs.py","app/ui/widgets.py"], "status": "planned"},
+    {"path": "app/ui/note_view.py", "type": "ui", "responsibility": "Tab Note: danh sách, editor, tự lưu, ghim, xoá", "feature": ["F-05","F-06"], "dependencies": ["app/models.py","app/ui/widgets.py"], "status": "planned"},
+    {"path": "app/ui/dialogs.py", "type": "ui", "responsibility": "EntryDialog (thêm/sửa, validate) và ConfirmDialog", "feature": ["F-06"], "dependencies": ["app/models.py","app/ui/widgets.py"], "status": "planned"},
+    {"path": "app/ui/settings_view.py", "type": "ui", "responsibility": "Chọn thư mục dữ liệu, nhập xuất, giao diện, sao lưu", "feature": ["F-07","F-08","F-10","F-11"], "dependencies": ["app/config.py","app/io_data.py","app/ui/widgets.py"], "status": "planned"},
+    {"path": "app/ui/widgets.py", "type": "ui", "responsibility": "TagEditor, ToastBar, LogoLabel, cache pixmap LRU", "feature": ["F-06"], "dependencies": ["app/paths.py"], "status": "planned"},
+    {"path": "assets/fonts/", "type": "asset", "responsibility": "Font Be Vietnam Pro đóng gói kèm", "feature": ["F-11"], "dependencies": [], "status": "planned"},
+    {"path": "assets/icons/", "type": "asset", "responsibility": "Icon ứng dụng và icon thao tác", "feature": [], "dependencies": [], "status": "planned"},
+    {"path": "tests/test_paths.py", "type": "test", "responsibility": "Kiểm thử paths: chế độ mã nguồn, giả lập frozen, đường dẫn tương đối và tuyệt đối", "feature": ["F-07"], "dependencies": ["app/paths.py","app/config.py"], "status": "planned"},
+    {"path": "tests/test_db.py", "type": "test", "responsibility": "Kiểm thử CRUD, migration, tìm kiếm trên DB tạm", "feature": ["F-06","F-09"], "dependencies": ["app/db.py"], "status": "planned"},
+    {"path": "tests/test_io_data.py", "type": "test", "responsibility": "Kiểm thử xuất, nhập gộp và ghi đè, file lỗi, chuyển thư mục dữ liệu", "feature": ["F-07","F-08"], "dependencies": ["app/io_data.py"], "status": "planned"},
+    {"path": "linkvault.spec", "type": "build", "responsibility": "Cấu hình PyInstaller onedir, khai báo datas cho assets", "feature": ["F-07"], "dependencies": [], "status": "planned"},
+    {"path": "requirements.txt", "type": "config", "responsibility": "Dependency chạy: PyQt6", "feature": [], "dependencies": [], "status": "planned"},
+    {"path": "requirements-dev.txt", "type": "config", "responsibility": "Dependency phát triển: pytest, pyinstaller", "feature": [], "dependencies": [], "status": "planned"}
+  ],
+  "external_dependencies": [
+    {"name": "PyQt6", "reason": "Khung giao diện desktop đã chọn"},
+    {"name": "PyInstaller", "reason": "Đóng gói exe onedir (chỉ khi build)"},
+    {"name": "pytest", "reason": "Kiểm thử logic không cần UI (chỉ khi phát triển)"}
+  ]
+}
